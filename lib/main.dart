@@ -5,7 +5,6 @@ import 'dart:convert';
 void main() {
   runApp(MaterialApp(
     home: Scaffold(
-      backgroundColor: Colors.black ,
       appBar: AppBar(
         title: Text(
           'Movies Poster',
@@ -13,16 +12,83 @@ void main() {
         ),
         backgroundColor: Colors.yellow,
       ),
-      body: Container(),// Use stateful widget you created here
+      body: MoviesPage(), // Use stateful widget you created here
     ),
   ));
 }
 
 // You are given json string of movies list (see file movies.dart)
 String moviesList = MoviesList.moviesJsonList;
-
 // Hint:
 // Convert the string to List of maps using jsonDecode and then use it
 
 // Create a stateful widget called MoviesPage here
 
+class MoviesPage extends StatefulWidget {
+  @override
+  _MoviesPageState createState() => _MoviesPageState();
+}
+
+class _MoviesPageState extends State<MoviesPage> {
+
+
+  List decodedMoviesList = json.decode(moviesList);
+
+  // A lot of time got wasted here as I tried to convert the list to a map so that each element could be accessed iteratively. But later it occurred that list[][] can access the same
+
+  int movieItemNumber = 1;
+
+  // to track and initiate the next link when the button gets clicked. It's starting with 1 because first link is already provided. Another way to do it was to use the ID.
+
+  var movieLink = 'https://raw.githubusercontent.com/android10/Sample-Data/master/Android-CleanArchitecture-Kotlin/posters/038001.jpg';
+
+  // first movie link is needed because from setState gets activated only when button gets clicked. For first time , it needs to be provided in raw.
+
+  // below function gets triggered when button gets clicked
+
+  changeLink() {
+
+    setState(() {
+
+      // printing each link to the console
+
+      print(decodedMoviesList[movieItemNumber]["poster"]);
+
+      // updating movieLink when the button is pressed
+
+      movieLink = decodedMoviesList[movieItemNumber]["poster"];
+
+      //updating item number in the list so that next link can be accessed
+
+      movieItemNumber = movieItemNumber + 1;
+
+    });
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Container(
+
+        child: Column(
+
+                children: <Widget>[
+
+                SizedBox(height: 50),
+                Center(
+                    child: Container(
+                        width: 350, height: 350, child: Image.network('${movieLink}'))),
+                SizedBox(height: 50),
+                FlatButton(
+                    color: Colors.red,
+                    textColor: Colors.white,
+                    onPressed: changeLink,
+                    child: Text(
+                        'Next Movie',
+          ),
+        ),
+      ],
+    ));
+  }
+}
